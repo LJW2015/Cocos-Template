@@ -8,20 +8,12 @@ import { ResourceManager } from '../Core/ResourceManager';
 import { UIBaseView } from './UIBaseView';
 
 export class UIViewFactory {
-    // 存储viewId到{预制体路径, 逻辑类}的映射
-    private static _uiViewMap: Map<string, { prefabPath: string, viewClass: new () => UIBaseView }> = new Map();
-
-    /**
-     * 注册UI预制体路径和对应的逻辑类
-     * @param viewId 唯一标识
-     * @param prefabPath 预制体资源路径
-     * @param viewClass 逻辑类构造函数（需继承UIBaseView）
-     */
-    public static RegisterUIView(viewId: string, prefabPath: string, viewClass: new () => UIBaseView) {
-        if (!this._uiViewMap.has(viewId)) {
-            this._uiViewMap.set(viewId, { prefabPath, viewClass });
-        }
-    }
+    // 2. 静态配置所有UI的viewId、预制体路径、逻辑类
+    private static _uiViewMap: Map<string, { prefabPath: string, viewClass: new () => UIBaseView }> = new Map([
+        // ['MainMenu', { prefabPath: 'Prefabs/MainMenu', viewClass: MainMenuView }],
+        // ['SettingPanel', { prefabPath: 'Prefabs/SettingPanel', viewClass: SettingPanelView }],
+        // ...继续添加其它UI
+    ]);
 
     /**
      * 异步创建UI实例并挂载对应的逻辑类
@@ -29,7 +21,7 @@ export class UIViewFactory {
      * @param param 传递给UI逻辑类的参数
      * @returns 返回挂载了逻辑类的UI节点
      */
-    public static async CreateUIViewAsync(viewId: string): Promise<Node | null> {
+    public static async CreateUIViewAsync(viewId: string, param?: any): Promise<Node | null> {
         const info = this._uiViewMap.get(viewId);
         if (!info) {
             console.error(`UI预制体 ${viewId} 未注册`);
@@ -42,6 +34,10 @@ export class UIViewFactory {
             return null;
         }
         const uiNode = instantiate(prefab);
+        const viewComp = uiNode.addComponent(viewClass) as UIBaseView;
+        if (viewComp && typeof viewComp.OnInit === 'function') {
+            viewComp.OnInit(param);
+        }
         return uiNode;
     }
 } 
