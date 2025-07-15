@@ -72,8 +72,7 @@ export class UIManager {
             console.error(`UI ${uiId} 配置不存在`);
             return;
         }
-        // 使用UIViewFactory异步创建UI实例
-        const uiNode = await UIViewFactory.CreateUIViewAsync(uiId, prefabPath);
+        const uiNode = await UIViewFactory.CreateUIViewAsync(uiId);
         if (!uiNode) {
             console.error(`UI ${uiId} 创建失败`);
             return;
@@ -85,8 +84,7 @@ export class UIManager {
             // @ts-ignore
             const parent = this._layerDict.get((baseComponent as any).UILayer) || this._uiRoot!;
             parent.addChild(uiNode);
-            baseView?.OnInit();
-            baseView?.OnShow();
+            baseView?.OnInit(param);
         } else {
             console.error(`UI ${uiId} 未找到UIBaseComponent组件`);
             return;

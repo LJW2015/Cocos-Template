@@ -2,7 +2,7 @@
  * IUIView 接口，UI生命周期
  */
 export interface IUIView {
-    OnInit(): void;      // 初始化
+    OnInit(param?: any): void;      // 初始化
     OnShow(): void;      // 显示
     OnHide(): void;      // 隐藏
     OnClose(): void;     // 销毁
@@ -23,7 +23,7 @@ export class UIBaseView extends Component implements IUIView {
     public get UIComponent() { return this._uiComponent; }
 
     // 生命周期方法
-    public OnInit(): void {
+    public OnInit(param?: any): void {
         if (this._isInitialized) return;
         // 获取UI组件
         this._uiComponent = this.getComponent(UIBaseComponent);
@@ -33,6 +33,7 @@ export class UIBaseView extends Component implements IUIView {
         }
         this._uiComponent.Init && this._uiComponent.Init(this);
         this._isInitialized = true;
+        // 子类可重写OnInit并处理param
     }
 
     public OnShow(): void {
