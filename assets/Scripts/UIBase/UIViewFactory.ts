@@ -34,10 +34,6 @@ export class UIViewFactory {
             return null;
         }
         const uiNode = instantiate(prefab);
-        const viewComp = uiNode.addComponent(viewClass) as UIBaseView;
-        if (viewComp && typeof viewComp.OnInit === 'function') {
-            viewComp.OnInit(param);
-        }
         return uiNode;
     }
 } 
